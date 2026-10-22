@@ -192,14 +192,14 @@ payment modes, guarantee-only bookings and upsells (§6.17). The full requiremen
 - **FR-BE-01** Hosted, responsive booking pages at `book.<platform>/<property>` and embeddable widget for the hotel's website.
 - **FR-BE-02** Flow: dates & guests → room types with photos & rate options → extras (charge-catalogue items flagged as sellable online) → guest details → payment/guarantee → confirmation.
 - **FR-BE-03** Shows total price including taxes and fees before payment (required by consumer-protection law in many markets).
-- **FR-BE-04** Supports promo codes, multiple rooms per booking, languages (EN + launch-country language), property currency.
+- **FR-BE-04** Supports promo codes, multiple rooms per booking, languages (as Phase 0: English, plus Sinhala/Tamil staff UI), property currency.
 - **FR-BE-05** Payment modes per rate plan: guarantee only (card tokenized), deposit %, or full prepayment. 3-D Secure / SCA supported.
 - **FR-BE-06** Guest receives a manage-booking link to view, modify (if rate allows) and cancel.
 - **FR-BE-07** Page load < 2 s on 4G; Lighthouse accessibility score ≥ 90.
 - **FR-BE-08** Analytics hooks: Google Analytics 4 / Tag Manager events for search, select, book.
 
 ### 6.6 Channel manager (extends Phase 0)
-Phase 0 delivers connections to Booking.com, Airbnb and Expedia plus iCal (P0-CH-01…08). Phase 1
+Phase 0 delivers connections to Booking.com, Agoda, Airbnb and Expedia plus iCal (P0-CH-01…08). Phase 1
 adds mapping of multiple and derived rate plans, CTA/CTD/max-stay restrictions, and the exceptions
 queue on the front-desk screens.
 - **FR-CH-01** Map room types and rate plans to each OTA's equivalents.
@@ -397,7 +397,7 @@ Every table carries `id` (UUID), `organization_id`, `created_at`, `updated_at`, 
 | Backups | Point-in-time recovery 7 days; daily snapshots 30 days; restore tested monthly |
 | Observability | Structured logs, metrics, tracing; alerting on booking failures, OTA sync lag > 5 min, night audit failure |
 | Browser support | Last 2 versions of Chrome, Edge, Safari, Firefox; housekeeping app on Android 10+ / iOS 15+ |
-| Localisation | UI strings externalized; EN + launch-country language; date/number/currency formats per locale |
+| Localisation | UI strings externalized; English, Sinhala, Tamil; date/number/currency formats per locale |
 | Accessibility | WCAG 2.1 AA for booking engine; staff app keyboard-navigable |
 
 ---
@@ -437,7 +437,7 @@ Foundations, distribution, online payments and messaging come from Phase 0, so P
 
 ## 12. Open questions
 
-1. **Launch country** — determines guest-registration rules, fiscal/invoice requirements, tax rules and second UI language.
+1. ~~Launch country~~ — **Resolved: Sri Lanka** (see Phase 0 open question 1 for what still needs confirming).
 2. **Payment gateway** partner and terminal hardware.
 3. **Smart-lock / keypad vendors** to integrate first.
 4. **Pilot hotels** — identified? Their current PMS determines import templates. Could any Phase 0 customers at the top of the size range be pilots?

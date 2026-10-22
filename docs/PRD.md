@@ -80,7 +80,7 @@ Each module is listed with the phase it first ships in and how later phases deep
 |---|---|---|---|
 | 1 | **PMS core** | Calendar, reservations, front desk, folios, night audit | 0 (calendar, bookings, automatic day close) → 1 (front desk, folios, visible night audit) |
 | 2 | **Booking engine & website** | Direct booking, template website | 0 → 1 (upsells) |
-| 3 | **Channel manager** | Two-way sync with OTAs | 0 (Booking.com, Airbnb, Expedia via aggregator + iCal) → 2 (GDS, metasearch) |
+| 3 | **Channel manager** | Two-way sync with OTAs | 0 (Booking.com, Agoda, Airbnb, Expedia via aggregator + iCal) → 2 (GDS, metasearch) |
 | 4 | **Payments** | Online payments, saved cards, deposits, refunds, terminals | 0 (online, payment links) → 1 (terminals, pre-auth, cash drawer) |
 | 5 | **Housekeeping** | Room status, cleaning lists, task boards | 0 (clean/dirty list) → 1 (supervisor board, inspection, lost & found) |
 | 6 | **Maintenance** | Work orders, out-of-order rooms, assets | 1 (work orders) → 2 (preventive, assets) |
@@ -190,7 +190,7 @@ Principles:
 
 ## 11. Open questions
 
-1. Launch country/countries? (Drives tax, fiscal and guest-registration work from Phase 0.)
+1. ~~Launch country~~ — **Resolved: Sri Lanka.** Still to confirm: current hotel tax stack (VAT, SSCL, TDL, 10% service charge), SLTDA licensing and police guest-reporting rules, and whether properties price in USD, LKR or both.
 2. Payment gateway partner (e.g. Adyen, Stripe)? Must support embedded owner onboarding and platform fees (Phase 0) and terminals (Phase 1).
 3. Which connectivity aggregator for Phase 0 (Airbnb support, content import, Google free booking links)?
 4. Pricing model: per room per month, per property tier, or modular add-ons? Free plan?

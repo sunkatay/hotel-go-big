@@ -24,7 +24,7 @@ balance is a hidden folio with immutable entries). Moving a customer up to Phase
 plan upgrade, not a migration.
 
 ### What these customers buy on (in order)
-1. Channel manager that keeps Booking.com, Airbnb and Expedia in sync — no double bookings.
+1. Channel manager that keeps Booking.com, Agoda, Airbnb and Expedia in sync — no double bookings.
 2. A direct booking website that cuts OTA commission.
 3. Online payments: deposits, automatic balance collection, payment links.
 4. Automation: confirmation, pre-arrival, check-in instructions, review requests.
@@ -48,7 +48,7 @@ plan upgrade, not a migration.
 | Property & rooms | One property; room types; rooms or single-unit listings |
 | Calendar | Rooms × dates calendar with drag-and-drop |
 | Rates | Seasonal prices, weekday/weekend, min stay, one non-refundable variant, extra-guest fee, per-channel markup |
-| Channel manager | Booking.com, Airbnb, Expedia via a connectivity aggregator; iCal sync for other channels |
+| Channel manager | Booking.com, Agoda, Airbnb, Expedia via a connectivity aggregator; iCal sync for other channels |
 | Direct booking | Booking engine + template website with custom domain |
 | Reservations | Create, modify, cancel; multi-room bookings; blocks (owner use, closed dates) |
 | Payments | Online card payments, deposits, automatic balance charge, payment links, refunds, OTA virtual cards, manual cash/transfer records |
@@ -153,7 +153,7 @@ departed rooms to dirty, generates today's cleaning list, and emails the owner a
 - **P0-RATE-06** Simple discounts: length-of-stay (e.g. 7+ nights −10%) and promo codes for the website.
 
 ### 6.5 Channel manager
-- **P0-CH-01** Two-way connections to **Booking.com, Airbnb and Expedia** via a certified connectivity aggregator.
+- **P0-CH-01** Two-way connections to **Booking.com, Agoda, Airbnb and Expedia** via a certified connectivity aggregator (Agoda matters for Asian source markets).
 - **P0-CH-02** Push availability, prices and min stay on every change; full resync on demand and nightly.
 - **P0-CH-03** Receive new, modified and cancelled bookings; create/update them automatically, including guest details and OTA virtual-card details (tokenized).
 - **P0-CH-04** **iCal** import/export for other channels (e.g. Vrbo, local portals). The UI states clearly that iCal is availability-only and can lag, so double bookings are possible on those channels.
@@ -168,7 +168,7 @@ departed rooms to dirty, generates today's cleaning list, and emails the owner a
 - **P0-WEB-03** Embeddable booking widget/button for properties that already have a website.
 - **P0-WEB-04** Booking flow: dates & guests → available rooms with photos and price variants → extras (e.g. breakfast, parking) → guest details → payment → confirmation. Multi-room in one booking.
 - **P0-WEB-05** Total price including taxes and fees shown before payment.
-- **P0-WEB-06** Languages: EN + launch-country language; guest-selectable.
+- **P0-WEB-06** Languages: English first; Sinhala and Tamil for staff-facing screens; more guest languages (e.g. German, French, Russian, Chinese) as demand shows; guest-selectable.
 - **P0-WEB-07** Basic SEO (titles, meta, structured data for hotels), Google Analytics / Tag Manager, Meta pixel.
 - **P0-WEB-08** Guest **manage-booking** link to view, pay balance, and cancel within policy.
 - **P0-WEB-09** Mobile page load < 2 s on 4G; WCAG 2.1 AA.
@@ -318,7 +318,7 @@ Phase 0 uses the entities defined in the PRD and [Phase 1 §7](./phase-1-spec.md
 | Self-serve | ≥ 80% of signups complete setup without support contact |
 | Backups | Point-in-time recovery 7 days; daily snapshots 30 days |
 | Observability | Alerts on sync lag > 5 min, ingestion failures, payment failures, day-close failures |
-| Localisation | EN + launch-country language for staff app, website and emails |
+| Localisation | English, Sinhala, Tamil for the staff app; English + selected tourist languages for website and emails |
 
 ---
 
@@ -326,7 +326,7 @@ Phase 0 uses the entities defined in the PRD and [Phase 1 §7](./phase-1-spec.md
 
 | Integration | Purpose | Approach |
 |---|---|---|
-| Connectivity aggregator | Booking.com, Airbnb, Expedia ARI + reservations (+ content import, + Google free booking links if offered) | One certified partner; direct OTA certification later for cost and control |
+| Connectivity aggregator | Booking.com, Agoda, Airbnb, Expedia ARI + reservations (+ content import, + Google free booking links if offered) | One certified partner; direct OTA certification later for cost and control |
 | iCal | Other channels | Standard feeds, polled every 10–15 min |
 | Payment gateway | Embedded owner onboarding, online payments, saved cards, payouts, refunds | One partner with a platform/marketplace model (allows us to earn on payments) |
 | Email | Transactional + template emails | Email service provider with bounce webhooks |
@@ -369,9 +369,9 @@ through the platform (subject to the gateway partner's model).
 
 ## 13. Open questions
 
-1. **Launch country** — guest-registration rules, invoice requirements, tourist tax, language.
+1. ~~Launch country~~ — **Resolved: Sri Lanka.** Still to confirm locally: SLTDA licensing and police guest-reporting rules (for P0-OCI-03), current hotel tax stack (VAT, SSCL, TDL, 10% service charge — replaces the generic tax model in §4.3), invoice requirements, and whether properties price in USD, LKR or both (multi-currency may be needed in Phase 0).
 2. **Connectivity aggregator** — which partner; does it support Airbnb, content import and Google free booking links?
-3. **Payment gateway** — must support embedded onboarding and platform fees.
+3. **Payment gateway** — Stripe is not available to Sri Lankan businesses; candidates are PayHere, WebXPay, Dialog Genie and bank gateways. Must support international cards, saved cards (tokenization) for automatic balance charges and, ideally, onboarding each property as a sub-merchant with a platform fee.
 4. **Pricing** — per room vs per property tier; is there a free plan?
 5. **Support model** — chat only, or phone for onboarding?
 6. Do we need **SMS/WhatsApp** in Phase 0 for the launch market, or is email enough?
