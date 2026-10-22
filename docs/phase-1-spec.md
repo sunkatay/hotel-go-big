@@ -1,22 +1,29 @@
-# Phase 1 MVP Spec — "Run the Rooms"
+# Phase 1 Spec — "Run the Rooms"
 
 | | |
 |---|---|
 | Status | Draft v0.1 |
 | Last updated | 2026-10-22 |
 | Parent doc | [PRD](./PRD.md) |
+| Builds on | [Phase 0 — Run the Small Property](./phase-0-spec.md) |
 
 ---
 
 ## 1. Summary
 
-Phase 1 delivers what an **independent, rooms-focused hotel (20–150 rooms)** needs to replace
-its current PMS: room inventory, rates, reservations, a direct booking engine, one OTA connection,
-front desk, folios & payments, night audit, housekeeping, basic maintenance, guest profiles and
-operational reports.
+Phase 1 takes the product up-market from Phase 0's 5–20 room properties to **independent hotels
+with 20–60 rooms and a staffed front desk**, which need to replace a full PMS. It adds a real
+front desk, folios, card terminals, a visible night audit, housekeeping teams, maintenance,
+roles & permissions, upsells, smart-lock integration, review aggregation and accounting
+integrations.
 
-It is deliberately built on the full multi-tenant, multi-property data model from the PRD, even
-though each customer has only one property in this phase.
+Phase 0 already delivers the calendar, simple rates, reservations, the booking engine and website,
+the multi-OTA channel manager, online payments, automated messaging, online check-in, guest
+registration and a cleaning list. Phase 1 **extends** those rather than rebuilding them; sections
+marked *(extends Phase 0)* list only the additions or the full requirement for completeness.
+
+Existing Phase 0 customers can upgrade to the Phase 1 plan (*Hotel*) with no data migration,
+because both phases use the same multi-tenant, multi-property data model from the PRD.
 
 ### Phase 1 exit criteria
 1. **3 pilot hotels** run live on the platform for **30 consecutive days** without falling back to their previous PMS.
@@ -35,7 +42,7 @@ though each customer has only one property in this phase.
 | Setup | Organization, one property, users & roles, taxes, room types, rooms |
 | Rates | Rate plans, seasonal prices, restrictions, manual availability control |
 | Reservations | Individual reservations, multi-room reservations, modify/cancel/no-show |
-| Distribution | Direct booking engine; **one** OTA connection (via aggregator, see §10) |
+| Distribution | Booking engine and multi-OTA channel manager from Phase 0, extended with derived rate plans, full restrictions and upsells |
 | Front desk | Tape chart, arrivals/departures/in-house lists, room assignment, check-in, check-out |
 | Billing | Folios, charges, payments, refunds, split folios, invoices/receipts |
 | Payments | Card tokenization, pre-authorization, capture, refund via one gateway; cash |
@@ -43,16 +50,20 @@ though each customer has only one property in this phase.
 | Housekeeping | Room status, auto-generated daily task board, mobile web app |
 | Maintenance | Work orders, out-of-order / out-of-service rooms |
 | Guests | Guest profiles, preferences/notes, stay history, duplicate merge |
-| Comms | Transactional emails: confirmation, modification, cancellation, pre-arrival, folio |
+| Comms | Phase 0 automated messaging and online check-in, plus modification/cancellation emails and folio emails |
+| Upsells | Upgrades, extras, early check-in / late check-out sold at booking and pre-arrival |
+| Smart locks | Keypad / smart-lock integration with 1–2 vendors: codes issued at check-in |
+| Reputation | Review aggregation and responses |
+| Accounting | Integrations with the launch market's most common accounting tools |
 | Reports | Operational and daily manager reports (see §6.15) |
-| Migration | CSV import of future reservations and guest profiles |
+| Migration | CSV import of future reservations and guest profiles from legacy PMSs; plan upgrade from Phase 0 |
 | Platform | Audit log, role-based access, MFA |
 
 ### Out of scope (later phases)
-Groups/blocks and allotments · events & function space · F&B POS · guest mobile app, online check-in,
-digital keys · door-lock integration · additional OTAs / GDS · loyalty · marketing campaigns ·
-dynamic pricing · AR / city ledger & direct billing to companies · GL (beyond CSV export) ·
-HR / rostering · multi-property / CRS · public API · offline write mode · kiosks.
+Groups/blocks and allotments · events & function space · F&B POS · guest mobile app and mobile keys ·
+GDS / metasearch · loyalty · marketing campaigns · dynamic pricing · AR / city ledger & direct
+billing to companies · GL (beyond accounting integrations) · HR / rostering · multi-property / CRS ·
+public API · offline write mode · kiosks.
 
 ---
 
@@ -175,7 +186,9 @@ Each requirement has an ID for traceability to tickets and tests.
 - Given 1 room left of type DBL on 12 Mar, when two agents try to book it simultaneously, exactly one succeeds and the other receives "no longer available".
 - Given a reservation with a "free cancel until 48h" policy, when cancelled 24h before arrival, the first-night fee is posted and shown before confirmation.
 
-### 6.5 Booking engine (direct website)
+### 6.5 Booking engine (extends Phase 0)
+Phase 0 delivers the booking engine and template website (P0-WEB-01…10). Phase 1 adds rate-plan
+payment modes, guarantee-only bookings and upsells (§6.17). The full requirement set is:
 - **FR-BE-01** Hosted, responsive booking pages at `book.<platform>/<property>` and embeddable widget for the hotel's website.
 - **FR-BE-02** Flow: dates & guests → room types with photos & rate options → extras (charge-catalogue items flagged as sellable online) → guest details → payment/guarantee → confirmation.
 - **FR-BE-03** Shows total price including taxes and fees before payment (required by consumer-protection law in many markets).
@@ -185,8 +198,11 @@ Each requirement has an ID for traceability to tickets and tests.
 - **FR-BE-07** Page load < 2 s on 4G; Lighthouse accessibility score ≥ 90.
 - **FR-BE-08** Analytics hooks: Google Analytics 4 / Tag Manager events for search, select, book.
 
-### 6.6 OTA connection (channel manager, minimal)
-- **FR-CH-01** Map room types and rate plans to the OTA's equivalents.
+### 6.6 Channel manager (extends Phase 0)
+Phase 0 delivers connections to Booking.com, Airbnb and Expedia plus iCal (P0-CH-01…08). Phase 1
+adds mapping of multiple and derived rate plans, CTA/CTD/max-stay restrictions, and the exceptions
+queue on the front-desk screens.
+- **FR-CH-01** Map room types and rate plans to each OTA's equivalents.
 - **FR-CH-02** Push availability, rates and restrictions (ARI) on change, plus full resync on demand.
 - **FR-CH-03** Receive new, modified and cancelled reservations; create/update reservations automatically, including virtual card details where provided (tokenized).
 - **FR-CH-04** Failed or unmappable messages go to an **exceptions queue** visible to front desk with a clear reason and a retry/resolve action.
@@ -255,7 +271,8 @@ Each requirement has an ID for traceability to tickets and tests.
 - **FR-GST-04** GDPR: export a guest's data; anonymize on request while keeping financial records legally required.
 - **FR-GST-05** Allergy/accessibility flags surfaced on arrivals list and reservation header.
 
-### 6.14 Notifications
+### 6.14 Notifications (extends Phase 0)
+Phase 0's automated messaging and online check-in (P0-MSG, P0-OCI) carry over unchanged.
 - **FR-NOT-01** Templated, per-language emails: booking confirmation, modification, cancellation, pre-arrival (N days before), post-stay thank you with folio/invoice.
 - **FR-NOT-02** Admin can edit template text and logo; preview and test-send.
 - **FR-NOT-03** Email delivery status (sent, bounced) visible on reservation.
@@ -280,6 +297,25 @@ All reports export to CSV and PDF.
 ### 6.16 Data migration
 - **FR-MIG-01** CSV import for guest profiles and future reservations (with assigned rooms and prices), with validation preview, error report and dry-run mode.
 - **FR-MIG-02** Import templates documented for the 2–3 most common legacy PMSs in the launch market.
+- **FR-MIG-03** Phase 0 customers upgrade in-app: hidden folios become visible, the automatic day close becomes the night audit (auto-run stays on by default), cleaning lists become the housekeeping board. No data is re-imported.
+
+### 6.17 Upsells
+- **FR-UP-01** Upsell offers: room upgrade (price difference per night), extras from the charge catalogue, early check-in, late check-out; each with price, availability limits and images.
+- **FR-UP-02** Offered in the booking engine flow and in the pre-arrival email / online check-in.
+- **FR-UP-03** Upgrade offers only shown when the target room type has availability; accepted upgrades re-assign room type and re-price.
+- **FR-UP-04** Accepted upsells post to the folio and appear on the arrivals list.
+- **FR-UP-05** Report: upsell revenue by offer and conversion rate.
+
+### 6.18 Smart locks & keypads
+- **FR-LOCK-01** Integrate 1–2 keypad / smart-lock vendors common in the launch market.
+- **FR-LOCK-02** Generate a unique access code per stay, valid from check-in time to check-out time; revoke on check-out, cancellation or room move.
+- **FR-LOCK-03** Code delivered via the Phase 0 arrival message, gated on online check-in and payment if configured (P0-OCI-05).
+- **FR-LOCK-04** Lock offline or code-generation failure alerts the front desk before the guest arrives.
+
+### 6.19 Reputation & accounting integrations
+- **FR-REV-01** Aggregate reviews from Google, TripAdvisor and connected OTAs where available; show rating trends.
+- **FR-REV-02** Respond to Google reviews from the app; link out for sources without a response API.
+- **FR-ACC-01** Push the daily journal (FR-NA-09) to the launch market's 1–2 most common accounting tools via API, with account mapping; CSV remains available.
 
 ---
 
@@ -371,9 +407,11 @@ Every table carries `id` (UUID), `organization_id`, `created_at`, `updated_at`, 
 | Integration | Purpose | Approach |
 |---|---|---|
 | Payment gateway | Tokenize, auth, capture, refund, terminals | One partner (TBD — open question 2) |
-| OTA connectivity | ARI push, reservation pull | Via a certified connectivity aggregator to reach the first OTA fast; direct certification later |
+| OTA connectivity | ARI push, reservation pull | Phase 0 aggregator integration, extended for more rate plans and restrictions |
 | Email | Transactional email | Email service provider with bounce webhooks |
-| Accounting | Daily journal | CSV export with account mapping |
+| Accounting | Daily journal | API push to 1–2 accounting tools; CSV export with account mapping |
+| Smart locks | Access codes per stay | 1–2 vendor APIs (open question 3) |
+| Reviews | Aggregation and responses | Google Business Profile API; other sources where available |
 | Authorities | Guest registration | Country-specific export/submission (open question 1) |
 
 ---
@@ -382,12 +420,15 @@ Every table carries `id` (UUID), `organization_id`, `created_at`, `updated_at`, 
 
 | Milestone | Contents | Duration |
 |---|---|---|
-| M0 Foundations | Tenancy, auth/roles, audit log, property setup, room types/rooms, CI/CD, observability | 4 weeks |
-| M1 Inventory & reservations | Rates, restrictions, availability engine, reservations, guest profiles, tape chart | 6 weeks |
-| M2 Front desk & money | Check-in/out, folios, payments gateway, invoices, cash drawer | 6 weeks |
-| M3 Night audit & housekeeping | Night audit, housekeeping app, maintenance, reports v1 | 5 weeks |
-| M4 Distribution | Booking engine, OTA via aggregator, emails, exceptions queue | 6 weeks |
-| M5 Pilot readiness | Data import, localisation, compliance export, load & security testing, training material | 4 weeks |
+Foundations, distribution, online payments and messaging come from Phase 0, so Phase 1 is shorter.
+
+| Milestone | Contents | Duration |
+|---|---|---|
+| M1 Roles & rates | Full roles & permissions, derived rate plans, full restrictions, guest profiles | 4 weeks |
+| M2 Front desk & money | Tape chart, arrivals/departures, check-in/out, folios & routing, terminals, pre-auth, invoices, cash drawer | 6 weeks |
+| M3 Night audit & operations | Visible night audit, housekeeping board, maintenance & out-of-order, reports | 5 weeks |
+| M4 Revenue add-ons | Upsells, smart locks, review aggregation, accounting integrations | 5 weeks |
+| M5 Pilot readiness | Legacy PMS import, Phase 0 upgrade path, load & security testing, training material | 3 weeks |
 | Pilot | 3 hotels live; fix & iterate | 6–8 weeks |
 
 (Assumes a team of ~6–8 engineers, 1 designer, 1 PM. M3 and M4 can partly overlap.)
@@ -398,8 +439,8 @@ Every table carries `id` (UUID), `organization_id`, `created_at`, `updated_at`, 
 
 1. **Launch country** — determines guest-registration rules, fiscal/invoice requirements, tax rules and second UI language.
 2. **Payment gateway** partner and terminal hardware.
-3. **OTA** — which one first (likely Booking.com) and which aggregator.
-4. **Pilot hotels** — identified? Their current PMS determines import templates.
+3. **Smart-lock / keypad vendors** to integrate first.
+4. **Pilot hotels** — identified? Their current PMS determines import templates. Could any Phase 0 customers at the top of the size range be pilots?
 5. Should the **inspection** step be mandatory for pilot hotels?
 6. Is **pre-paid deposit handling** subject to escrow/trust rules in the launch country?
 7. Tech stack and hosting region (data residency).
