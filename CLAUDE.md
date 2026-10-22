@@ -23,6 +23,11 @@ Hotel Go Big: an all-in-one platform to run a hotel or a network of hotels. Curr
 - Launch market is **Sri Lanka**; check local facts (tax, payments, regulation) rather than assuming
   rules from other countries, and say when information couldn't be verified.
 
+## Merging
+- **Never merge to `main` without the founder's explicit go for that specific merge.** No auto-merging.
+- Whenever changes are pushed and waiting to be merged, **end the response with a clear reminder**
+  that a merge is pending and what it contains.
+
 ## Conventions
 - Docs live in `docs/`, written in Markdown.
 - Requirement IDs: `P0-<AREA>-NN` for Phase 0, `FR-<AREA>-NN` for Phase 1.
