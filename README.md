@@ -9,3 +9,4 @@ All-in-one platform to run a hotel — or a network of hotels.
 - [Phase 1 Spec — "Run the Rooms"](docs/phase-1-spec.md) — next release, for 20–60 room hotels with a front desk
 - [Partner Questions](docs/partner-questions.md) — what to ask PayHere, Channex and other partners
 - [Advisor Questions](docs/advisor-questions.md) — what to ask advisors such as Lahiru
+- [Customer Interview Questions](docs/customer-questions.md) — what to ask property owners

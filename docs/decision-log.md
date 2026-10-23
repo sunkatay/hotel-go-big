@@ -3,7 +3,7 @@
 What we decided, when, and **why**. The PRD and specs say *what* the product does; this log keeps
 the reasoning, research findings and pending questions behind those choices.
 
-Status: ✅ decided · 🟡 leaning / recommended, not final · ❓ open
+Status: ✅ decided · 🟡 leaning / recommended, not final · ❓ open · ℹ️ finding
 
 ---
 
@@ -16,6 +16,24 @@ Status: ✅ decided · 🟡 leaning / recommended, not final · ❓ open
 | 2026-10-22 | Phases: **0** micro (5–20 rooms) → **1** small hotels (20–60) → **2** full-service (60–200) → **3** groups → **4** enterprise | ✅ | See [PRD §7](./PRD.md) |
 | 2026-10-22 | Phase 0 uses an **automatic day close** instead of a night audit screen | ✅ | Small properties have nobody awake at midnight; same data is recorded underneath, so Phase 1 can show a full night audit |
 | 2026-10-22 | Phase 0 is **self-serve**: signup, trial, setup wizard, import from existing OTA listing, phone-first web app | ✅ | Low price only works if winning and serving each customer costs very little |
+
+## Team & budget
+
+| Date | Decision | Status | Why |
+|---|---|---|---|
+| 2026-10-23 | **Team: the founder and Claude** for now; bring in a person only if we get really stuck and Lahiru has no answer | ✅ | Founder's decision. Implication: the founder owns the cloud, payment and partner accounts; Claude works when a session is started and has been given access, but isn't monitoring 24/7 |
+| 2026-10-23 | **No budget set**; figure it out as we go | ✅ | Founder's decision. Known costs ahead: company registration, lawyer/accountant, cloud hosting, Channex (~$130/month + ~$7/property once live), VAPT (~LKR 0.8–1.7M before beta) |
+
+## Customers
+
+| Date | Decision | Status | Why |
+|---|---|---|---|
+| 2026-10-23 | **First beta candidate:** a cabana property known to the founder — several cabanas in one place, each sold as a separate room, in a nature area; also sells **day-out packages** and **meals** (not a separate restaurant, as far as known); **internet connectivity can be poor** | ✅ | A good real-world test. Open implications below |
+| — | **Day-out packages** (day visits without an overnight stay) aren't in Phase 0 scope | ❓ | Decide after talking to the owner: add a simple "day package" product to Phase 0, or handle outside the system for the beta |
+| — | **Meals**: Phase 0 already sells meals as extras (e.g. breakfast); it doesn't yet have **meal-plan rates** (bed & breakfast, half board, full board), which are common in Sri Lanka | ❓ | Confirm with the owner how meals are sold (included in the room price, per meal, per person per day), then decide whether meal-plan rates move into Phase 0 |
+| 2026-10-23 | **Restaurant / F&B system stays a later phase** (Phase 2, as in the PRD), not Phase 0 | ✅ | Founder confirmed: meals, not a restaurant, for now. Founder will collect information on the cabana property's food operations for future use, and report back if they run a restaurant model |
+| — | **Poor connectivity**: Phase 0 has no offline mode | ❓ | May need the phone app to keep today's bookings and cleaning list available offline, and sync when back online |
+| — | Model each cabana as its own room type (unique units), and check whether Channex holiday-rental (per-unit) pricing applies | ❓ | See Channex question 2 |
 
 ## Market
 
@@ -33,6 +51,7 @@ Status: ✅ decided · 🟡 leaning / recommended, not final · ❓ open
 |---|---|---|---|
 | 2026-10-22 | Connectivity aggregator: **Channex** | 🟡 | White-label channel manager API built for PMS companies; connects to major OTAs. List price ~$130/month + ~$7 per connected hotel (or ~$0.50 per holiday-rental unit), excl. VAT, no setup fee. Limits: can't push listing content (photos etc.) to OTAs; needs our certification + each owner's authorization per OTA |
 | 2026-10-22 | Payment gateway: **PayHere** as first choice | 🟡 | **Stripe is not available to Sri Lankan businesses.** PayHere is the most widely used local gateway (cards, wallets, LankaQR, LKR settlement) and has a pre-approval / saved-card API. Alternatives: WebXPay, Dialog Genie, bank gateways. Confirm the questions in [partner-questions.md](./partner-questions.md) before committing |
+| 2026-10-23 | Channex account setup | ℹ️ | Test ("staging") account is self-serve at staging.channex.io, no sales call or card needed. Channex works only with companies that have a PMS or booking engine (we qualify). No company-registration requirement found. Standard terms; $1,500 fee only if we want custom terms or a security questionnaire |
 | 2026-10-22 | Design the payment layer so **a second gateway can be added** | ✅ | Reduces dependence on one local provider |
 | 2026-10-22 | We **never hold guests' money** — payments go guest → gateway → property | ✅ | Avoids becoming a regulated payments business |
 

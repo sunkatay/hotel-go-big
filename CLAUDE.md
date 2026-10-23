@@ -12,6 +12,7 @@ Hotel Go Big: an all-in-one platform to run a hotel or a network of hotels. Curr
 3. [`docs/phase-0-spec.md`](docs/phase-0-spec.md) and [`docs/phase-1-spec.md`](docs/phase-1-spec.md) — detailed requirements.
 4. [`docs/partner-questions.md`](docs/partner-questions.md) — questions for PayHere, Channex and others.
 5. [`docs/advisor-questions.md`](docs/advisor-questions.md) — questions for advisors (e.g. Lahiru).
+6. [`docs/customer-questions.md`](docs/customer-questions.md) — interview guide for property owners.
 
 ## Working with the founder
 - The founder is not a software engineer: explain technical terms in plain language, with examples.
@@ -26,6 +27,9 @@ Hotel Go Big: an all-in-one platform to run a hotel or a network of hotels. Curr
   that an advisor could help with (Lahiru: built and sold an HR/payroll app with Claude Code, knows
   security practices like VAPT), **suggest it as a candidate question**, but add it to the file
   **only after the founder confirms**.
+- **Customer interviews:** when the founder asks for the owner questions, give each with its "why we're
+  asking" from `docs/customer-questions.md`. Record interview answers there and resulting decisions in
+  the decision log.
 - Launch market is **Sri Lanka**; check local facts (tax, payments, regulation) rather than assuming
   rules from other countries, and say when information couldn't be verified.
 
