@@ -22,7 +22,7 @@ and to what Claude Code can do.
 **Why we're asking:**
 - Our plan includes an independent VAPT before the Phase 0 beta, budgeted at roughly LKR 0.8–1.7 million
   for a local fixed-scope test. That figure comes from published price lists, not real experience.
-  Lahiru's actual cost tells us whether the budget is realistic.
+  If Lahiru did one and shares what he paid, we can compare it with that budget.
 - *Who asked for it* tells us when we really need one. If customers or partners demanded it, we know
   it's unavoidable. If the buyer asked for it when he sold, it matters for the company's eventual value too.
 - An HR/payroll app handles sensitive personal and salary data, similar in sensitivity to our guest
