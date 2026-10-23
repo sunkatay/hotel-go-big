@@ -10,3 +10,5 @@ All-in-one platform to run a hotel — or a network of hotels.
 - [Partner Questions](docs/partner-questions.md) — what to ask PayHere, Channex and other partners
 - [Advisor Questions](docs/advisor-questions.md) — what to ask advisors such as Lahiru
 - [Customer Interview Questions](docs/customer-questions.md) — what to ask property owners
+- [Tech Stack & Hosting Proposal](docs/tech-stack-proposal.md) — what we build with and where it runs
+- [Owner app prototype](prototype/owner-app.html) — clickable phone prototype for owner interviews

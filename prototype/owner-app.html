@@ -1,0 +1,694 @@
+<title>Hotel Go Big Owner App</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one phone-width app column, sticky header, fixed bottom tab bar; screens swap inside. */
+:root {
+  --bg: #f2f5f0;
+  --surface: #ffffff;
+  --sunk: #e8ede6;
+  --ink: #17211b;
+  --muted: #5b6a61;
+  --line: #d9e0d7;
+  --accent: #1d6a4c;
+  --accent-soft: #dcefe5;
+  --on-accent: #ffffff;
+  --good: #23804f;
+  --warn: #a95b00;
+  --warn-soft: #fbeedb;
+  --bad: #b3261e;
+  --bad-soft: #fbe3e0;
+  --ch-booking: #2a5db0;
+  --ch-agoda: #7b45b0;
+  --ch-airbnb: #c9424f;
+  --ch-expedia: #b8860b;
+  --ch-direct: #1d6a4c;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --r: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1511; --surface: #18201b; --sunk: #202a24; --ink: #e6ece7; --muted: #9aa89f;
+    --line: #2b3630; --accent: #5cc095; --accent-soft: #1d3a2d; --on-accent: #0b1a12;
+    --good: #5cc095; --warn: #f0a640; --warn-soft: #3a2a12; --bad: #f2877e; --bad-soft: #3d1c1a;
+    --ch-booking: #6b98e6; --ch-agoda: #b08ae0; --ch-airbnb: #ee7b86; --ch-expedia: #e0b44a; --ch-direct: #5cc095;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1511; --surface: #18201b; --sunk: #202a24; --ink: #e6ece7; --muted: #9aa89f;
+  --line: #2b3630; --accent: #5cc095; --accent-soft: #1d3a2d; --on-accent: #0b1a12;
+  --good: #5cc095; --warn: #f0a640; --warn-soft: #3a2a12; --bad: #f2877e; --bad-soft: #3d1c1a;
+  --ch-booking: #6b98e6; --ch-agoda: #b08ae0; --ch-airbnb: #ee7b86; --ch-expedia: #e0b44a; --ch-direct: #5cc095;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+.app { max-width: 460px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; }
+.proto-note {
+  font-size: 12px; color: var(--muted); text-align: center;
+  padding-block: 6px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg);
+  padding-block: 10px 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line);
+}
+.brand { min-width: 0; }
+.brand h1 { font-family: var(--font-display); font-weight: 700; font-size: 19px; margin: 0; letter-spacing: -0.01em; line-height: 1.15; }
+.brand p { margin: 0; font-size: 13px; color: var(--muted); }
+.back { border: 0; background: var(--sunk); border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 14px; }
+
+.sync { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 5px 10px; border: 0; white-space: nowrap; }
+.sync.ok { background: var(--accent-soft); color: var(--accent); }
+.sync.off { background: var(--warn-soft); color: var(--warn); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+
+main {
+  flex: 1; display: flex; flex-direction: column; gap: 18px;
+  padding-block: 14px 110px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.offline-banner { background: var(--warn-soft); color: var(--warn); border-radius: var(--r); padding: 10px 12px; font-size: 14px; font-weight: 500; }
+
+h2.sec { font-family: var(--font-display); font-size: 16px; font-weight: 700; margin: 0 0 8px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+h2.sec small { font-family: var(--font-body); font-weight: 500; font-size: 13px; color: var(--muted); }
+.label { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 10px 8px; text-align: left; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tile b { font-family: var(--font-display); font-size: 24px; line-height: 1; }
+.tile span { font-size: 12px; color: var(--muted); }
+
+.list { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.row { display: flex; align-items: center; gap: 12px; padding: 12px; border: 0; background: none; text-align: left; width: 100%; }
+.row + .row { border-top: 1px solid var(--line); }
+.row .main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.row .main strong { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .main span { font-size: 13px; color: var(--muted); }
+.row .end { text-align: right; font-size: 13px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
+.chev { color: var(--muted); font-size: 18px; flex: none; }
+.empty { padding: 14px 12px; color: var(--muted); font-size: 14px; }
+
+.alert { display: flex; gap: 10px; align-items: flex-start; border-radius: var(--r); padding: 12px; border: 0; text-align: left; width: 100%; }
+.alert.bad { background: var(--bad-soft); color: var(--ink); }
+.alert.bad .ic { background: var(--bad); }
+.alert.warn { background: var(--warn-soft); }
+.alert.warn .ic { background: var(--warn); }
+.alert.info { background: var(--accent-soft); }
+.alert.info .ic { background: var(--accent); }
+.alert .ic { width: 8px; height: 8px; border-radius: 50%; margin-top: 7px; flex: none; }
+.alert strong { display: block; font-weight: 600; }
+.alert span { font-size: 13px; color: var(--muted); }
+.stack { display: flex; flex-direction: column; gap: 8px; }
+
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--sunk); color: var(--muted); white-space: nowrap; }
+.chip.good { background: var(--accent-soft); color: var(--good); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+.chip.idea { background: transparent; border: 1px dashed var(--muted); }
+.ch { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; }
+.ch i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+
+.occ { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; align-items: end; height: 70px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 10px 10px 0; }
+.occ div { display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.occ .bar { width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 3px; }
+.occ .bar.low { opacity: .45; }
+.occ-days { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; padding: 4px 10px 0; font-size: 10px; color: var(--muted); text-align: center; }
+
+/* Calendar */
+.cal-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.cal { --cw: 46px; display: grid; grid-template-columns: 104px repeat(14, var(--cw)); width: max-content; }
+.cal .hd { font-size: 11px; color: var(--muted); text-align: center; padding: 8px 0 6px; border-bottom: 1px solid var(--line); line-height: 1.2; }
+.cal .hd b { display: block; font-size: 14px; color: var(--ink); }
+.cal .hd.today b { color: var(--accent); }
+.cal .hd.wknd { background: var(--sunk); }
+.cal .rn { position: sticky; left: 0; z-index: 2; background: var(--surface); font-size: 13px; font-weight: 600; padding: 0 8px; display: flex; align-items: center; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); height: 52px; line-height: 1.15; }
+.cal .corner { position: sticky; left: 0; z-index: 3; background: var(--surface); border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); }
+.cal .rowgrid { grid-column: 2 / -1; display: grid; grid-template-columns: repeat(14, var(--cw)); border-bottom: 1px solid var(--line); height: 52px; }
+.cal .cell { grid-row: 1; border: 0; border-right: 1px solid var(--line); background: none; }
+.cal .cell.wknd { background: var(--sunk); }
+.cal .cell:hover { background: var(--accent-soft); }
+.cal .bk { grid-row: 1; z-index: 1; margin: 7px 2px; border-radius: 8px; border: 0; color: #fff; font-size: 12px; font-weight: 600; text-align: left; padding: 0 7px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; display: flex; align-items: center; }
+.cal .bk.blocked { background: repeating-linear-gradient(45deg, var(--sunk), var(--sunk) 6px, var(--line) 6px, var(--line) 12px); color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); }
+
+/* Detail */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 14px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; text-align: right; font-weight: 500; min-width: 0; }
+.kv .tot { font-weight: 700; border-top: 1px solid var(--line); padding-top: 8px; }
+.guest-name { font-family: var(--font-display); font-size: 24px; font-weight: 700; margin: 0; line-height: 1.15; text-wrap: balance; }
+.sel { user-select: all; }
+.timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.timeline li { display: grid; grid-template-columns: 14px 1fr; gap: 8px; font-size: 14px; }
+.timeline li::before { content: ""; width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; background: var(--line); }
+.timeline li.done::before { background: var(--good); }
+.timeline li.fail::before { background: var(--bad); }
+.timeline li.next::before { background: transparent; border: 2px solid var(--accent); width: 6px; height: 6px; }
+.timeline small { display: block; color: var(--muted); font-size: 12px; }
+
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px 14px; font-weight: 600; font-size: 14px; }
+.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.btn.danger { color: var(--bad); }
+.btn.wide { width: 100%; padding: 13px; font-size: 15px; }
+.btn:disabled { opacity: .5; cursor: default; }
+.confirm { background: var(--bad-soft); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+
+/* Form */
+.form { display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 13px; font-weight: 600; color: var(--muted); }
+.field input, .field select { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; width: 100%; min-width: 0; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stepper { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.stepper button { border: 0; background: none; width: 44px; height: 44px; font-size: 20px; font-weight: 600; }
+.stepper output { flex: 1; text-align: center; font-weight: 600; }
+.seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.seg button { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 9px 4px; font-size: 13px; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.quote { background: var(--sunk); border-radius: var(--r); padding: 12px; }
+.err { color: var(--bad); font-size: 13px; font-weight: 600; }
+
+/* Cleaning */
+.hk-btn { border: 0; border-radius: 999px; padding: 7px 12px; font-weight: 700; font-size: 13px; min-width: 96px; }
+.hk-btn.dirty { background: var(--bad-soft); color: var(--bad); }
+.hk-btn.cleaning { background: var(--warn-soft); color: var(--warn); }
+.hk-btn.clean { background: var(--accent-soft); color: var(--good); }
+
+/* More */
+.price-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 12px; }
+.price-row + .price-row { border-top: 1px solid var(--line); }
+.mini-step { display: inline-flex; align-items: center; gap: 4px; }
+.mini-step button { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); font-weight: 700; }
+.mini-step output { min-width: 62px; text-align: center; font-weight: 700; }
+.switch { position: relative; width: 46px; height: 28px; border-radius: 999px; border: 0; background: var(--line); flex: none; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--surface); transition: transform .15s; }
+.switch[aria-checked="true"] { background: var(--warn); }
+.switch[aria-checked="true"]::after { transform: translateX(18px); }
+.hbar { display: grid; grid-template-columns: 82px 1fr 56px; gap: 8px; align-items: center; font-size: 13px; }
+.hbar .track { height: 10px; background: var(--sunk); border-radius: 999px; overflow: hidden; }
+.hbar .fill { height: 100%; border-radius: 999px; }
+.stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+/* Tab bar */
+nav.tabs {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--surface); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
+}
+nav.tabs .in { max-width: 460px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); }
+nav.tabs button { border: 0; background: none; padding: 8px 0 10px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; color: var(--muted); }
+nav.tabs button svg { width: 22px; height: 22px; }
+nav.tabs button[aria-current="page"] { color: var(--accent); }
+nav.tabs .plus { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; margin-top: -2px; }
+
+/* Sheet + toast */
+.scrim { position: fixed; inset: 0; background: rgba(10, 18, 13, .45); z-index: 40; display: flex; align-items: flex-end; justify-content: center; }
+.sheet { background: var(--surface); width: 100%; max-width: 460px; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; gap: 12px;
+  padding-block: 18px calc(18px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.sheet h3 { font-family: var(--font-display); margin: 0; font-size: 19px; }
+.sync-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.sync-list li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px; background: var(--sunk); border-radius: 10px; font-weight: 600; font-size: 14px; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); z-index: 50; background: var(--ink); color: var(--bg);
+  padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; max-width: calc(100% - 32px); text-align: center; }
+
+@media (max-width: 380px) {
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .switch::after { transition: none; }
+}
+</style>
+
+<div class="app">
+  <div class="proto-note">Prototype with sample data. Nothing here is real.</div>
+  <header class="top" id="top"></header>
+  <main id="main"></main>
+</div>
+<nav class="tabs" aria-label="Main"><div class="in" id="tabs"></div></nav>
+<div id="overlay"></div>
+
+<script>
+(function () {
+  "use strict";
+  var LKR = 332;
+  var DAY = 86400000;
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  function d(off) { return new Date(today.getTime() + off * DAY); }
+  var WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  var MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  function fmt(off) { var x = d(off); return WD[x.getDay()] + " " + x.getDate() + " " + MO[x.getMonth()]; }
+  function usd(n) { return "USD " + Math.round(n).toLocaleString("en-US"); }
+  function lkr(n) { return "LKR " + Math.round(n * LKR).toLocaleString("en-US"); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function isWknd(off) { var g = d(off).getDay(); return g === 0 || g === 6; }
+
+  var CH = {
+    booking: { name: "Booking.com", c: "var(--ch-booking)", pay: "Guest pays at the property. Card held by Booking.com." },
+    agoda: { name: "Agoda", c: "var(--ch-agoda)", pay: "Prepaid to Agoda. Virtual card ready to charge on check-in day." },
+    airbnb: { name: "Airbnb", c: "var(--ch-airbnb)", pay: "Guest paid Airbnb. Payout arrives the day after check-in." },
+    expedia: { name: "Expedia", c: "var(--ch-expedia)", pay: "Expedia virtual card. Chargeable from check-in day." },
+    direct: { name: "Direct", c: "var(--ch-direct)", pay: "" }
+  };
+  var OTAS = ["booking", "agoda", "airbnb", "expedia"];
+  var PLANS = { RO: { name: "Room only", pp: 0 }, BB: { name: "Bed & breakfast", pp: 8 }, HB: { name: "Half board", pp: 18 }, FB: { name: "Full board", pp: 28 } };
+
+  var rooms = [
+    { id: "C1", name: "River Cabana", short: "River", max: 2, rate: 70 },
+    { id: "C2", name: "Treehouse", short: "Treehouse", max: 2, rate: 95 },
+    { id: "C3", name: "Paddy View 1", short: "Paddy 1", max: 3, rate: 60 },
+    { id: "C4", name: "Paddy View 2", short: "Paddy 2", max: 3, rate: 60 },
+    { id: "C5", name: "Forest Family", short: "Family", max: 5, rate: 110 },
+    { id: "C6", name: "Hilltop Cabana", short: "Hilltop", max: 2, rate: 80 }
+  ];
+  function room(id) { for (var i = 0; i < rooms.length; i++) if (rooms[i].id === id) return rooms[i]; }
+
+  var nextId = 1;
+  function mk(o) {
+    o.id = "B" + (nextId++);
+    o.status = o.status || "confirmed";
+    o.plan = o.plan || "BB";
+    o.paid = o.paid || 0;
+    o.msgs = o.msgs || [];
+    return o;
+  }
+  var bookings = [
+    mk({ guest: "Anna Müller", from: "Germany", phone: "+49 151 2345 6789", ch: "booking", room: "C2", start: -1, nights: 3, guests: 2, plan: "HB", status: "checked_in", oci: true }),
+    mk({ guest: "Kenji Tanaka", from: "Japan", phone: "+81 90 1234 5678", ch: "agoda", room: "C1", start: 0, nights: 2, guests: 2, plan: "BB", eta: "15:30", oci: true }),
+    mk({ guest: "Priya & Rohan Menon", from: "India", phone: "+91 98450 12345", ch: "direct", src: "Website", room: "C5", start: 0, nights: 3, guests: 4, plan: "BB", eta: "14:00", oci: false, depositPaid: true, balanceFailed: true }),
+    mk({ guest: "Sophie Laurent", from: "France", phone: "+33 6 12 34 56 78", ch: "airbnb", room: "C3", start: -2, nights: 2, guests: 2, plan: "RO", status: "checked_in", oci: true }),
+    mk({ guest: "Dilshan Perera", from: "Sri Lanka", phone: "+94 77 123 4567", ch: "direct", src: "WhatsApp", room: "C6", start: -1, nights: 1, guests: 2, plan: "FB", status: "checked_in", oci: true, depositPaid: true, fullyPaid: true }),
+    mk({ guest: "Tom & Emma Clarke", from: "United Kingdom", phone: "+44 7700 900123", ch: "expedia", room: "C4", start: 1, nights: 4, guests: 2, plan: "HB", oci: false }),
+    mk({ guest: "Mei Lin", from: "China", phone: "+86 138 0013 8000", ch: "agoda", room: "C3", start: 2, nights: 3, guests: 3, plan: "BB", oci: false }),
+    mk({ guest: "Marco Rossi", from: "Italy", phone: "+39 312 345 6789", ch: "airbnb", room: "C6", start: 2, nights: 2, guests: 2, plan: "RO", oci: false }),
+    mk({ guest: "Lukas Novák", from: "Czechia", phone: "+420 601 234 567", ch: "booking", room: "C1", start: 3, nights: 2, guests: 2, plan: "BB", oci: false }),
+    mk({ guest: "Olivia Brown", from: "Australia", phone: "+61 412 345 678", ch: "booking", room: "C2", start: 4, nights: 3, guests: 2, plan: "HB", oci: false }),
+    mk({ guest: "Nadia Fernando", from: "Sri Lanka", phone: "+94 71 987 6543", ch: "direct", src: "Phone", room: "C5", start: 5, nights: 2, guests: 5, plan: "FB", oci: false, depositPaid: true }),
+    mk({ guest: "Hannah Schmidt", from: "Germany", phone: "+49 160 9876 5432", ch: "booking", room: "C4", start: 7, nights: 3, guests: 2, plan: "BB", oci: false }),
+    mk({ guest: "Owner stay", block: true, ch: "direct", room: "C6", start: 9, nights: 2, guests: 0 })
+  ];
+  var dayOuts = [{ name: "Wijesinghe family", guests: 8, what: "Lunch, river bathing, nature walk", time: "10:00–17:00", paid: "Deposit paid" }];
+
+  var state = {
+    view: "today", prev: null, detail: null, offline: false, pending: 0, cancelAsk: false,
+    hk: { C3: "dirty", C6: "dirty", C2: "dirty", C1: "clean", C5: "clean", C4: "clean" },
+    draft: null, toastTimer: null
+  };
+
+  function price(b) {
+    var r = room(b.room), tot = 0;
+    for (var i = 0; i < b.nights; i++) tot += r.rate + (isWknd(b.start + i) ? 10 : 0);
+    tot += PLANS[b.plan].pp * b.guests * b.nights;
+    return tot;
+  }
+  function overlaps(roomId, start, nights, ignoreId) {
+    return bookings.some(function (b) {
+      if (b.id === ignoreId || b.room !== roomId || b.status === "cancelled") return false;
+      return start < b.start + b.nights && b.start < start + nights;
+    });
+  }
+  function live() { return bookings.filter(function (b) { return b.status !== "cancelled" && !b.block; }); }
+  function arrivals() { return live().filter(function (b) { return b.start === 0; }); }
+  function departures() { return live().filter(function (b) { return b.start + b.nights === 0 && b.status !== "checked_out"; }); }
+  function inhouse() { return live().filter(function (b) { return b.start <= 0 && b.start + b.nights > 0; }); }
+  function soldOn(off) { return bookings.filter(function (b) { return b.status !== "cancelled" && b.start <= off && b.start + b.nights > off; }).length; }
+
+  var ICON = {
+    today: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>',
+    calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    cleaning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3l-4 9M7 12h10l2 9H5z"/></svg>',
+    more: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>'
+  };
+
+  function chTag(k) { return '<span class="ch"><i style="background:' + CH[k].c + '"></i>' + CH[k].name + "</span>"; }
+  function syncPill() {
+    if (state.offline) return '<button class="sync off" data-act="go" data-v="more"><span class="dot"></span>Offline' + (state.pending ? " · " + state.pending + " to sync" : "") + "</button>";
+    return '<span class="sync ok"><span class="dot"></span>All channels synced</span>';
+  }
+
+  function renderTop() {
+    var t = document.getElementById("top");
+    if (state.view === "detail" || state.view === "new") {
+      t.innerHTML = '<button class="back" data-act="back">‹ Back</button>' + syncPill();
+      return;
+    }
+    t.innerHTML = '<div class="brand"><h1>Mist Valley Cabanas</h1><p>' + fmt(0) + " · 6 cabanas</p></div>" + syncPill();
+  }
+
+  function renderTabs() {
+    var tabs = [["today", "Today"], ["calendar", "Calendar"], ["new", "New"], ["cleaning", "Cleaning"], ["more", "More"]];
+    document.getElementById("tabs").innerHTML = tabs.map(function (t) {
+      var cur = state.view === t[0] || (t[0] === "today" && state.view === "detail" && state.prev === "today") ? ' aria-current="page"' : "";
+      if (t[0] === "new") return '<button data-act="new"' + cur + ' aria-label="New booking"><span class="plus">' + ICON.plus + "</span></button>";
+      return '<button data-act="go" data-v="' + t[0] + '"' + cur + ">" + ICON[t[0]] + t[1] + "</button>";
+    }).join("");
+  }
+
+  function bookingRow(b, endHtml) {
+    var r = room(b.room);
+    return '<button class="row" data-act="open" data-id="' + b.id + '"><div class="main"><strong>' + esc(b.guest) + "</strong><span>" + r.name + " · " + b.guests + " guests · " + CH[b.ch].name + "</span></div><div class=\"end\">" + endHtml + '</div><span class="chev">›</span></button>';
+  }
+
+  function viewToday() {
+    var arr = arrivals(), dep = departures(), inh = inhouse();
+    var toClean = rooms.filter(function (r) { return state.hk[r.id] !== "clean"; }).length;
+    var h = "";
+    if (state.offline) h += '<div class="offline-banner">No internet. Showing what was saved on this phone. Changes will sync when you\'re back online.</div>';
+    h += '<div class="tiles">' +
+      '<button class="tile" data-act="jump" data-v="arr"><b>' + arr.length + "</b><span>Arriving</span></button>" +
+      '<button class="tile" data-act="jump" data-v="dep"><b>' + dep.length + "</b><span>Leaving</span></button>" +
+      '<button class="tile" data-act="go" data-v="calendar"><b>' + inh.length + "</b><span>In house</span></button>" +
+      '<button class="tile" data-act="go" data-v="cleaning"><b>' + toClean + "</b><span>To clean</span></button></div>";
+
+    var alerts = [];
+    bookings.forEach(function (b) {
+      if (b.balanceFailed && b.status !== "cancelled") alerts.push('<button class="alert bad" data-act="open" data-id="' + b.id + '"><span class="ic"></span><div><strong>Balance payment failed: ' + esc(b.guest) + "</strong><span>The bank asked the guest to approve the charge. Tap to send a payment link.</span></div></button>");
+    });
+    var noOci = arr.filter(function (b) { return !b.oci; });
+    noOci.forEach(function (b) {
+      alerts.push('<button class="alert warn" data-act="open" data-id="' + b.id + '"><span class="ic"></span><div><strong>Online check-in not done: ' + esc(b.guest) + "</strong><span>Arriving today " + (b.eta ? "around " + b.eta : "") + ". Passport details still needed.</span></div></button>");
+    });
+    alerts.push('<button class="alert info" data-act="open" data-id="' + bookings[7].id + '"><span class="ic"></span><div><strong>New booking from Airbnb</strong><span>Marco Rossi, Hilltop Cabana, ' + fmt(2) + ". Other channels already updated.</span></div></button>");
+    h += '<section><h2 class="sec">Needs you <small>' + alerts.length + "</small></h2><div class=\"stack\">" + alerts.join("") + "</div></section>";
+
+    h += '<section id="arr"><h2 class="sec">Arriving today</h2><div class="list">' + (arr.length ? arr.map(function (b) {
+      var chip = b.status === "checked_in" ? '<span class="chip good">Checked in</span>' : (b.oci ? '<span class="chip good">Check-in done online</span>' : '<span class="chip warn">Check-in pending</span>');
+      return bookingRow(b, chip + "<span>" + (b.eta ? "ETA " + b.eta : "") + "</span>");
+    }).join("") : '<div class="empty">No arrivals today.</div>') + "</div></section>";
+
+    h += '<section id="dep"><h2 class="sec">Leaving today</h2><div class="list">' + (dep.length ? dep.map(function (b) {
+      return bookingRow(b, '<span class="chip">Check-out 11:00</span>');
+    }).join("") : '<div class="empty">Everyone has checked out.</div>') + "</div></section>";
+
+    h += '<section><h2 class="sec">Day-out visits <span class="chip idea">Idea to discuss</span></h2><div class="list">' + dayOuts.map(function (x) {
+      return '<div class="row"><div class="main"><strong>' + esc(x.name) + " · " + x.guests + " guests</strong><span>" + esc(x.what) + "</span></div><div class=\"end\"><span>" + x.time + '</span><span class="chip good">' + x.paid + "</span></div></div>";
+    }).join("") + "</div></section>";
+
+    var bars = "", days = "";
+    for (var i = 0; i < 14; i++) {
+      var s = soldOn(i), pct = Math.round((s / rooms.length) * 100);
+      bars += '<div title="' + fmt(i) + ": " + s + " of 6 sold\"><div class=\"bar" + (pct < 50 ? " low" : "") + '" style="height:' + Math.max(pct, 4) + '%"></div></div>';
+      days += "<span>" + WD[d(i).getDay()].charAt(0) + "</span>";
+    }
+    h += '<section><h2 class="sec">Next 14 days <small>cabanas sold per night</small></h2><div class="occ" aria-label="Occupancy for the next 14 days">' + bars + '</div><div class="occ-days">' + days + "</div></section>";
+    return h;
+  }
+
+  function viewCalendar() {
+    var startOff = -1, cols = 14;
+    var h = '<section><h2 class="sec">Calendar <small>Tap a booking to open it, or an empty night to book</small></h2>';
+    h += '<div class="cal-wrap"><div class="cal" role="grid" aria-label="Cabanas by night"><div class="corner"></div>';
+    for (var i = 0; i < cols; i++) {
+      var off = startOff + i, x = d(off);
+      h += '<div class="hd' + (off === 0 ? " today" : "") + (isWknd(off) ? " wknd" : "") + '">' + WD[x.getDay()] + "<b>" + x.getDate() + "</b></div>";
+    }
+    rooms.forEach(function (r) {
+      h += '<div class="rn">' + r.name + '</div><div class="rowgrid">';
+      for (var i = 0; i < cols; i++) {
+        var off = startOff + i;
+        h += '<button class="cell' + (isWknd(off) ? " wknd" : "") + '" style="grid-column:' + (i + 1) + '" data-act="book" data-room="' + r.id + '" data-off="' + off + '" aria-label="Book ' + r.name + " from " + fmt(off) + '"></button>';
+      }
+      bookings.forEach(function (b) {
+        if (b.room !== r.id || b.status === "cancelled") return;
+        var s = Math.max(b.start, startOff), e = Math.min(b.start + b.nights, startOff + cols);
+        if (e <= s) return;
+        var c1 = s - startOff + 1, c2 = e - startOff + 1;
+        if (b.block) h += '<button class="bk blocked" style="grid-column:' + c1 + " / " + c2 + '" data-act="toast" data-msg="Blocked for an owner stay. Not sold on any channel.">Owner stay</button>';
+        else h += '<button class="bk" style="grid-column:' + c1 + " / " + c2 + ";background:" + CH[b.ch].c + '" data-act="open" data-id="' + b.id + '">' + esc(b.guest.split(" ")[0]) + "</button>";
+      });
+      h += "</div>";
+    });
+    h += "</div></div>";
+    h += '<div class="legend" style="margin-top:10px">' + ["booking", "agoda", "airbnb", "expedia", "direct"].map(chTag).join("") + "</div></section>";
+    return h;
+  }
+
+  function viewDetail() {
+    var b = bookings.filter(function (x) { return x.id === state.detail; })[0];
+    if (!b) return '<div class="empty">Booking not found.</div>';
+    var r = room(b.room), tot = price(b);
+    var statusChip = { confirmed: '<span class="chip">Confirmed</span>', checked_in: '<span class="chip good">Checked in</span>', checked_out: '<span class="chip">Checked out</span>', cancelled: '<span class="chip bad">Cancelled</span>' }[b.status];
+    var h = '<section class="card"><div class="btns" style="justify-content:space-between;align-items:center">' + chTag(b.ch) + statusChip + '</div><h2 class="guest-name">' + esc(b.guest) + '</h2><div style="color:var(--muted);font-size:14px">' + esc(b.from) + ' · <span class="sel">' + esc(b.phone) + "</span>" + (b.src ? " · booked by " + esc(b.src) : "") + "</div></section>";
+
+    h += '<section class="card"><span class="label">Stay</span><dl class="kv">' +
+      "<dt>Cabana</dt><dd>" + r.name + "</dd>" +
+      "<dt>Arrive</dt><dd>" + fmt(b.start) + (b.eta ? " · " + b.eta : "") + "</dd>" +
+      "<dt>Leave</dt><dd>" + fmt(b.start + b.nights) + "</dd>" +
+      "<dt>Nights · guests</dt><dd>" + b.nights + " · " + b.guests + "</dd>" +
+      "<dt>Meals</dt><dd>" + PLANS[b.plan].name + "</dd></dl></section>";
+
+    var lines = "";
+    for (var i = 0; i < b.nights; i++) lines += "<dt>" + fmt(b.start + i) + "</dt><dd>" + usd(r.rate + (isWknd(b.start + i) ? 10 : 0)) + "</dd>";
+    if (PLANS[b.plan].pp) lines += "<dt>" + PLANS[b.plan].name + " (" + b.guests + " × " + b.nights + ")</dt><dd>" + usd(PLANS[b.plan].pp * b.guests * b.nights) + "</dd>";
+    lines += "<dt>Taxes & service charge</dt><dd style=\"color:var(--muted)\">Rates to confirm</dd>";
+    lines += '<dt class="tot">Total</dt><dd class="tot">' + usd(tot) + '<br><span style="font-weight:500;color:var(--muted);font-size:12px">≈ ' + lkr(tot) + "</span></dd>";
+    h += '<section class="card"><span class="label">Price</span><dl class="kv">' + lines + "</dl></section>";
+
+    var pay = "";
+    if (b.ch === "direct") {
+      var dep = Math.round(tot * 0.3);
+      pay += '<ol class="timeline">';
+      pay += '<li class="done"><div>Deposit ' + usd(dep) + " paid by card<small>Card saved securely for the balance</small></div></li>";
+      if (b.fullyPaid) pay += '<li class="done"><div>Balance ' + usd(tot - dep) + " paid<small>Charged automatically before arrival</small></div></li>";
+      else if (b.balanceFailed) pay += '<li class="fail"><div>Balance ' + usd(tot - dep) + " failed<small>The guest's bank wants them to approve it (3-D Secure)</small></div></li>";
+      else pay += '<li class="next"><div>Balance ' + usd(tot - dep) + " will be charged automatically<small>On " + fmt(Math.max(b.start - 7, 1)) + ", 7 days before arrival</small></div></li>";
+      pay += "</ol>";
+      if (b.balanceFailed) pay += '<button class="btn primary wide" data-act="paylink" data-id="' + b.id + '">Send payment link by WhatsApp</button>';
+    } else {
+      pay = '<p style="margin:0;font-size:14px">' + CH[b.ch].pay + "</p>";
+    }
+    h += '<section class="card"><span class="label">Payment</span>' + pay + "</section>";
+
+    var oci = b.oci ? '<li class="done"><div>Online check-in completed<small>Passport details saved for guest registration</small></div></li>' : '<li class="next"><div>Online check-in not done yet<small>Link sent with the pre-arrival message</small></div></li>';
+    h += '<section class="card"><span class="label">Guest messages</span><ol class="timeline">' +
+      (b.ch === "direct" ? '<li class="done"><div>Booking confirmation sent</div></li>' : "") +
+      (b.start <= 3 ? '<li class="done"><div>Pre-arrival message sent<small>Directions, meals, online check-in link</small></div></li>' : '<li><div>Pre-arrival message<small>Sends on ' + fmt(b.start - 3) + "</small></div></li>") +
+      oci +
+      '<li><div>Thank-you and review request<small>Sends the day after check-out</small></div></li></ol>' +
+      (!b.oci ? '<button class="btn" data-act="toast" data-msg="Reminder sent to ' + esc(b.guest) + '">Send check-in reminder</button>' : "") + "</section>";
+
+    var act = "";
+    if (b.status === "confirmed" && b.start <= 0) act += '<button class="btn primary" data-act="checkin" data-id="' + b.id + '">Check in</button>';
+    if (b.status === "checked_in") act += '<button class="btn primary" data-act="checkout" data-id="' + b.id + '">Check out</button>';
+    if (b.status === "confirmed") act += '<button class="btn danger" data-act="askcancel">Cancel booking</button>';
+    var conf = "";
+    if (state.cancelAsk && b.status === "confirmed") {
+      var fee = b.start <= 2 ? usd(r.rate) + " (first night, under the 48-hour policy)" : "no fee (free cancellation until 48 hours before)";
+      conf = '<div class="confirm"><strong>Cancel this booking?</strong><span>Cancellation fee: ' + fee + ". The cabana becomes available again on all channels.</span><div class=\"btns\"><button class=\"btn danger\" data-act=\"docancel\" data-id=\"" + b.id + '">Yes, cancel</button><button class="btn" data-act="nocancel">Keep booking</button></div></div>';
+    }
+    if (act || conf) h += '<section class="card"><div class="btns">' + act + "</div>" + conf + "</section>";
+    return h;
+  }
+
+  function viewNew() {
+    var f = state.draft;
+    var nightsOk = f.nights >= 1;
+    var clash = overlaps(f.room, f.start, f.nights);
+    var r = room(f.room);
+    var tooMany = f.guests > r.max;
+    var tot = price({ room: f.room, start: f.start, nights: f.nights, guests: f.guests, plan: f.plan });
+    var dateOpts = "";
+    for (var i = 0; i < 60; i++) dateOpts += '<option value="' + i + '"' + (i === f.start ? " selected" : "") + ">" + fmt(i) + (i === 0 ? " (today)" : "") + "</option>";
+    var h = '<section><h2 class="sec">New booking</h2><form class="form" id="newform" novalidate>';
+    h += '<div class="field"><label for="g">Guest name</label><input id="g" name="g" autocomplete="off" placeholder="e.g. Ruwan Silva" value="' + esc(f.guest) + '"></div>';
+    h += '<div class="field"><label for="p">Phone or WhatsApp</label><input id="p" name="p" inputmode="tel" placeholder="+94 7x xxx xxxx" value="' + esc(f.phone) + '"></div>';
+    h += '<div class="two"><div class="field"><label for="arr">Arrival</label><select id="arr" name="arr">' + dateOpts + '</select></div><div class="field"><label>Nights</label><div class="stepper"><button type="button" data-act="step" data-k="nights" data-d="-1" aria-label="Fewer nights">−</button><output>' + f.nights + '</output><button type="button" data-act="step" data-k="nights" data-d="1" aria-label="More nights">+</button></div></div></div>';
+    h += '<div class="two"><div class="field"><label for="rm">Cabana</label><select id="rm" name="rm">' + rooms.map(function (x) {
+      var busy = overlaps(x.id, f.start, f.nights);
+      return '<option value="' + x.id + '"' + (x.id === f.room ? " selected" : "") + ">" + x.name + (busy ? " (taken)" : "") + "</option>";
+    }).join("") + '</select></div><div class="field"><label>Guests</label><div class="stepper"><button type="button" data-act="step" data-k="guests" data-d="-1" aria-label="Fewer guests">−</button><output>' + f.guests + '</output><button type="button" data-act="step" data-k="guests" data-d="1" aria-label="More guests">+</button></div></div></div>';
+    h += '<div class="field"><label>Meals</label><div class="seg">' + Object.keys(PLANS).map(function (k) {
+      return '<button type="button" data-act="plan" data-v="' + k + '" aria-pressed="' + (f.plan === k) + '">' + (k === "RO" ? "None" : k === "BB" ? "Breakfast" : k === "HB" ? "Half board" : "Full board") + "</button>";
+    }).join("") + "</div></div>";
+    h += '<div class="field"><label for="src">Booked by</label><select id="src" name="src">' + ["Phone", "WhatsApp", "Walk-in", "Email", "Facebook"].map(function (s) { return "<option" + (s === f.src ? " selected" : "") + ">" + s + "</option>"; }).join("") + "</select></div>";
+    h += '<div class="quote"><dl class="kv"><dt>' + f.nights + " night" + (f.nights > 1 ? "s" : "") + ", " + PLANS[f.plan].name.toLowerCase() + '</dt><dd></dd><dt class="tot">Total</dt><dd class="tot">' + usd(tot) + '<br><span style="font-weight:500;color:var(--muted);font-size:12px">≈ ' + lkr(tot) + "</span></dd></dl></div>";
+    if (clash) h += '<p class="err">' + r.name + " is already booked on some of these nights. Pick another cabana or dates.</p>";
+    if (tooMany) h += '<p class="err">' + r.name + " sleeps up to " + r.max + " guests.</p>";
+    h += '<button class="btn primary wide" type="submit"' + (clash || tooMany || !nightsOk ? " disabled" : "") + ">Save and send payment link</button>";
+    h += '<p style="margin:0;font-size:13px;color:var(--muted)">Saving blocks this cabana on Booking.com, Agoda, Airbnb and Expedia, and sends the guest a link to pay a 30% deposit.</p>';
+    h += "</form></section>";
+    return h;
+  }
+
+  function viewCleaning() {
+    var groups = [
+      ["Leaving today: full clean", departures().map(function (b) { return b.room; })],
+      ["Staying guests: tidy", inhouse().filter(function (b) { return b.start + b.nights > 0 && b.start < 0; }).map(function (b) { return b.room; })],
+      ["Arriving today: check ready", arrivals().map(function (b) { return b.room; })]
+    ];
+    var labels = { dirty: "To clean", cleaning: "Cleaning", clean: "Clean" };
+    var h = '<section><h2 class="sec">Cleaning today <small>' + fmt(0) + "</small></h2>";
+    h += '<p style="margin:0 0 10px;font-size:14px;color:var(--muted)">Cleaners open this list from a link on their phone. No login needed. Tap a cabana to change its status.</p>';
+    groups.forEach(function (g) {
+      if (!g[1].length) return;
+      h += '<div class="label" style="margin:14px 0 6px">' + g[0] + '</div><div class="list">' + g[1].map(function (id) {
+        var r = room(id), s = state.hk[id];
+        var next = arrivals().filter(function (b) { return b.room === id; })[0];
+        return '<div class="row"><div class="main"><strong>' + r.name + "</strong><span>" + (next ? "Next guest arrives " + (next.eta || "today") : "No arrival today") + '</span></div><button class="hk-btn ' + s + '" data-act="hk" data-id="' + id + '">' + labels[s] + "</button></div>";
+      }).join("") + "</div>";
+    });
+    h += '<div style="margin-top:14px"><button class="btn wide" data-act="toast" data-msg="Link copied. Send it to your cleaner on WhatsApp.">Copy link for cleaners</button></div></section>';
+    return h;
+  }
+
+  function viewMore() {
+    var h = "";
+    h += '<section><h2 class="sec">Prices per night <small>weekends +USD 10</small></h2><div class="list">' + rooms.map(function (r) {
+      return '<div class="price-row"><div><strong style="font-weight:600">' + r.name + '</strong><div style="font-size:13px;color:var(--muted)">≈ ' + lkr(r.rate) + '</div></div><div class="mini-step"><button data-act="rate" data-id="' + r.id + '" data-d="-5" aria-label="Lower price">−</button><output>' + usd(r.rate) + '</output><button data-act="rate" data-id="' + r.id + '" data-d="5" aria-label="Raise price">+</button></div></div>';
+    }).join("") + '</div><p style="margin:8px 0 0;font-size:13px;color:var(--muted)">Booking sites show these prices +15% to cover their commission, so your own website is always cheapest.</p></section>';
+
+    h += '<section><h2 class="sec">Booking sites</h2><div class="list">' + OTAS.map(function (k) {
+      return '<div class="row"><div class="main"><strong>' + chTag(k) + "</strong><span>" + (state.offline ? "Waiting for internet" : "Connected · last update 2 min ago") + '</span></div><span class="chip ' + (state.offline ? "warn" : "good") + '">' + (state.offline ? "Paused" : "Live") + "</span></div>";
+    }).join("") + '<div class="row"><div class="main"><strong>' + chTag("direct") + ' website</strong><span>mistvalleycabanas.lk · sample address</span></div><span class="chip good">Live</span></div></div></section>';
+
+    var chMix = [["Booking.com", 38, "booking"], ["Agoda", 22, "agoda"], ["Airbnb", 17, "airbnb"], ["Expedia", 5, "expedia"], ["Direct", 18, "direct"]];
+    h += '<section><h2 class="sec">This month <small>sample figures</small></h2><div class="stat-row">' +
+      '<div class="tile"><b>64%</b><span>Cabanas sold</span></div><div class="tile"><b>USD 5,140</b><span>≈ ' + lkr(5140) + "</span></div>" +
+      '<div class="tile"><b>18%</b><span>Booked direct</span></div><div class="tile"><b>USD 690</b><span>Commission paid to booking sites</span></div></div>' +
+      '<div class="card" style="margin-top:8px"><span class="label">Where bookings came from</span>' + chMix.map(function (c) {
+        return '<div class="hbar"><span>' + c[0] + '</span><div class="track"><div class="fill" style="width:' + c[1] + "%;background:" + CH[c[2]].c + '"></div></div><span style="text-align:right">' + c[1] + "%</span></div>";
+      }).join("") + "</div></section>";
+
+    h += '<section><h2 class="sec">Try it</h2><div class="list"><div class="row"><div class="main"><strong>Simulate no internet</strong><span>See how the app behaves when the connection drops</span></div><button class="switch" role="switch" aria-checked="' + state.offline + '" aria-label="Simulate no internet" data-act="offline"></button></div></div></section>';
+    return h;
+  }
+
+  function render() {
+    renderTop();
+    renderTabs();
+    var m = document.getElementById("main");
+    var v = state.view;
+    m.innerHTML = v === "today" ? viewToday() : v === "calendar" ? viewCalendar() : v === "detail" ? viewDetail() : v === "new" ? viewNew() : v === "cleaning" ? viewCleaning() : viewMore();
+  }
+
+  function go(v) {
+    if (v !== "detail" && v !== "new") state.prev = v;
+    state.view = v; state.cancelAsk = false;
+    render(); window.scrollTo(0, 0);
+    if (["today", "calendar", "cleaning", "more"].indexOf(v) > -1) { try { history.replaceState(null, "", "#" + v); } catch (e) {} }
+  }
+  function startNew(roomId, off) {
+    state.draft = { guest: "", phone: "", start: off == null ? 0 : off, nights: 2, room: roomId || "C1", guests: 2, plan: "BB", src: "WhatsApp" };
+    if (!roomId) {
+      var free = rooms.filter(function (r) { return !overlaps(r.id, state.draft.start, 2); })[0];
+      if (free) state.draft.room = free.id;
+    }
+    go("new");
+  }
+  function toast(msg) {
+    var o = document.getElementById("toastbox");
+    if (!o) { o = document.createElement("div"); o.id = "toastbox"; o.className = "toast"; o.setAttribute("role", "status"); document.body.appendChild(o); }
+    o.textContent = msg; o.hidden = false;
+    clearTimeout(state.toastTimer);
+    state.toastTimer = setTimeout(function () { o.hidden = true; }, 2600);
+  }
+  function syncSheet(title, sub) {
+    var ov = document.getElementById("overlay");
+    ov.innerHTML = '<div class="scrim" data-act="closesheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="' + esc(title) + '"><h3>' + esc(title) + '</h3><p style="margin:0;color:var(--muted);font-size:14px">' + esc(sub) + '</p><ul class="sync-list">' + OTAS.map(function (k) {
+      return "<li>" + chTag(k) + '<span class="chip" id="s-' + k + '">Updating…</span></li>';
+    }).join("") + '</ul><button class="btn primary wide" data-act="closesheet">Done</button></div></div>';
+    OTAS.forEach(function (k, i) {
+      setTimeout(function () { var el = document.getElementById("s-" + k); if (el) { el.className = "chip good"; el.textContent = "Updated"; } }, 350 + i * 300);
+    });
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-act]");
+    if (!t) return;
+    var a = t.getAttribute("data-act");
+    if (a === "closesheet") { if (e.target === t || t.tagName === "BUTTON") document.getElementById("overlay").innerHTML = ""; return; }
+    if (a === "go") go(t.getAttribute("data-v"));
+    else if (a === "back") go(state.prev || "today");
+    else if (a === "open") { state.detail = t.getAttribute("data-id"); go("detail"); }
+    else if (a === "new") startNew();
+    else if (a === "book") startNew(t.getAttribute("data-room"), Math.max(0, +t.getAttribute("data-off")));
+    else if (a === "jump") { var el = document.getElementById(t.getAttribute("data-v")); if (el) el.scrollIntoView({ block: "start" }); }
+    else if (a === "toast") toast(t.getAttribute("data-msg"));
+    else if (a === "step") {
+      var k = t.getAttribute("data-k"), dd = +t.getAttribute("data-d");
+      state.draft[k] = Math.max(1, Math.min(k === "nights" ? 14 : 6, state.draft[k] + dd));
+      render();
+    }
+    else if (a === "plan") { state.draft.plan = t.getAttribute("data-v"); render(); }
+    else if (a === "hk") {
+      var id = t.getAttribute("data-id"), order = ["dirty", "cleaning", "clean"];
+      state.hk[id] = order[(order.indexOf(state.hk[id]) + 1) % 3];
+      render();
+      if (state.hk[id] === "clean") toast(room(id).name + " is ready. Front view updated.");
+    }
+    else if (a === "rate") {
+      var r = room(t.getAttribute("data-id"));
+      r.rate = Math.max(20, r.rate + (+t.getAttribute("data-d")));
+      render();
+      toast(state.offline ? "Saved on this phone. Will update booking sites when online." : "New price sent to all booking sites.");
+      if (state.offline) state.pending++;
+    }
+    else if (a === "offline") {
+      state.offline = !state.offline;
+      var had = state.pending;
+      if (!state.offline && had) { state.pending = 0; render(); syncSheet("Back online", "Sending " + had + " saved change" + (had > 1 ? "s" : "") + " to the booking sites."); }
+      else render();
+    }
+    else if (a === "checkin") { var b = find(t.getAttribute("data-id")); b.status = "checked_in"; render(); toast(b.guest + " checked in."); }
+    else if (a === "checkout") { var b2 = find(t.getAttribute("data-id")); b2.status = "checked_out"; state.hk[b2.room] = "dirty"; render(); toast(room(b2.room).name + " added to the cleaning list."); }
+    else if (a === "askcancel") { state.cancelAsk = true; render(); }
+    else if (a === "nocancel") { state.cancelAsk = false; render(); }
+    else if (a === "docancel") {
+      var b3 = find(t.getAttribute("data-id")); b3.status = "cancelled"; state.cancelAsk = false; render();
+      if (state.offline) { state.pending++; toast("Cancelled. Booking sites update when you're back online."); }
+      else syncSheet("Booking cancelled", room(b3.room).name + " is open again on every booking site.");
+    }
+    else if (a === "paylink") { var b4 = find(t.getAttribute("data-id")); toast("Payment link sent to " + b4.guest + " on WhatsApp."); }
+  });
+
+  document.addEventListener("change", function (e) {
+    if (state.view !== "new") return;
+    var f = state.draft;
+    if (e.target.id === "arr") f.start = +e.target.value;
+    if (e.target.id === "rm") f.room = e.target.value;
+    if (e.target.id === "src") f.src = e.target.value;
+    render();
+  });
+  document.addEventListener("input", function (e) {
+    if (state.view !== "new") return;
+    if (e.target.id === "g") state.draft.guest = e.target.value;
+    if (e.target.id === "p") state.draft.phone = e.target.value;
+  });
+  document.addEventListener("submit", function (e) {
+    if (e.target.id !== "newform") return;
+    e.preventDefault();
+    var f = state.draft;
+    if (!f.guest.trim()) { toast("Add the guest's name first."); var g = document.getElementById("g"); if (g) g.focus(); return; }
+    if (overlaps(f.room, f.start, f.nights)) return;
+    var nb = mk({ guest: f.guest.trim(), from: "—", phone: f.phone || "—", ch: "direct", src: f.src, room: f.room, start: f.start, nights: f.nights, guests: f.guests, plan: f.plan, oci: false, depositPaid: false });
+    bookings.push(nb);
+    state.detail = nb.id; state.prev = "calendar";
+    go("detail");
+    if (state.offline) { state.pending++; render(); toast("Saved on this phone. Booking sites update when you're back online."); }
+    else syncSheet("Booking saved", room(f.room).name + " is now blocked on every booking site. Payment link sent to the guest.");
+  });
+
+  function find(id) { return bookings.filter(function (b) { return b.id === id; })[0]; }
+
+  var h0 = (location.hash || "").replace("#", "");
+  if (["today", "calendar", "cleaning", "more"].indexOf(h0) > -1) state.view = h0;
+  state.prev = state.view;
+  render();
+})();
+</script>

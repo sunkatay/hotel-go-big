@@ -62,6 +62,14 @@ Status: ✅ decided · 🟡 leaning / recommended, not final · ❓ open · ℹ�
 | 2026-10-22 | **Tiered monthly plans by property size** + **payments margin** (small extra on card processing fee, only on payments through our system) | 🟡 | Simple to understand; upgrades feel natural; payments margin grows with customers' business. Avoid per-booking commission ("no commission, unlike the OTAs") |
 | 2026-10-22 | Starter plan roughly **US$15–30/month**, 14-day free trial, ~2 months free on annual | 🟡 | Guess based on competitors (Little Hotelier ~$29–109/mo; per-room products ~$4–18/room) adjusted for Sri Lanka; **test with 10–20 owners** before deciding. Must sit well above Channex cost (~$7–10 per property) |
 
+## Technology
+
+| Date | Decision | Status | Why |
+|---|---|---|---|
+| 2026-10-23 | **Tech stack and hosting proposal** written: TypeScript, Next.js installable web app, Node.js (NestJS) single application, PostgreSQL, hosted on **Render (Singapore)** | 🟡 | Managed, mainstream, low cost and low effort for a founder + Claude team; can move to AWS/Google Cloud later. See [tech-stack-proposal.md](./tech-stack-proposal.md) |
+| 2026-10-23 | **Sri Lanka PDPA**: core obligations incl. cross-border transfer rules scheduled to take effect **1 January 2027**; transfer safeguards set by Data Protection Authority directives, still in draft at last report | ℹ️ | Hosting outside Sri Lanka likely acceptable with safeguards; **confirm with a lawyer before beta** |
+| 2026-10-23 | **Clickable prototype** of the Phase 0 owner app for owner interviews | ✅ | Sample cabana property; shows today screen, calendar, booking detail, new booking, cleaning list, prices, booking sites, reports, offline mode, and a day-out visit marked as an idea. File: `prototype/owner-app.html` |
+
 ## Reference numbers (as of 2026-10-22)
 
 - USD → LKR ≈ **332**. Channex $130 ≈ LKR 43,200/month; $7 ≈ LKR 2,300 per property.
