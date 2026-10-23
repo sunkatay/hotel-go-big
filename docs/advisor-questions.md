@@ -102,3 +102,46 @@ and to what Claude Code can do.
 - Hosting is a monthly cost on every customer, so his real costs help us check our pricing.
 
 **Answer:**
+
+### 7. Finding the first customers
+**Ask:**
+- How did you find your first customers in Sri Lanka?
+- How did you convince them to try a new, unproven product? Free period, discount, personal relationships?
+
+**Why we're asking:**
+- We need 10–20 beta properties soon, and later 50 paying ones for Phase 0's exit target. He has done
+  this in the same market.
+- Small Sri Lankan businesses may buy very differently from what generic startup advice assumes
+  (trust, word of mouth, in-person visits). His experience tells us what actually works here.
+
+**Answer:**
+
+### 8. Company registration for PayHere
+**Ask:**
+- Was LunchBox HR a registered company when you applied for PayHere, or was there a workaround
+  (e.g. applying as an individual or sole proprietor)?
+- What documents did PayHere ask for, and how long did approval take?
+
+**Why we're asking:**
+- We don't have a registered company yet. If PayHere requires one, registration becomes a step we
+  must finish before payments can be built and tested with real money, and it affects the timeline.
+- It also hints at what PayHere will ask of *our* customers, many of whom are small family businesses
+  (see PayHere question 9 in [partner-questions.md](./partner-questions.md)).
+
+**Answer:**
+
+### 9. Who helps when the cloud goes wrong
+**Ask:**
+- When something went wrong with your servers or cloud account, did you have Claude look into it, or
+  did you have a person to turn to?
+- How did you find out about problems (alerts, customers telling you)? Did you ever have an outage
+  at night, and how was it handled?
+
+**Why we're asking:**
+- For now the team is the founder and Claude. Claude can investigate and fix problems when a session
+  is started and it has been given access, but it isn't watching the system around the clock and
+  can't be called at 3 a.m.
+- His experience tells us whether "founder + Claude" was enough in practice, or when a person on
+  call became necessary, and what that cost.
+
+**Answer:**
