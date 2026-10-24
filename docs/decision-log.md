@@ -68,6 +68,8 @@ Status: ✅ decided · 🟡 leaning / recommended, not final · ❓ open · ℹ�
 |---|---|---|---|
 | 2026-10-23 | **Tech stack and hosting proposal** written: TypeScript, Next.js installable web app, Node.js (NestJS) single application, PostgreSQL, hosted on **Render (Singapore)** | 🟡 | Managed, mainstream, low cost and low effort for a founder + Claude team; can move to AWS/Google Cloud later. See [tech-stack-proposal.md](./tech-stack-proposal.md) |
 | 2026-10-23 | **Sri Lanka PDPA**: core obligations incl. cross-border transfer rules scheduled to take effect **1 January 2027**; transfer safeguards set by Data Protection Authority directives, still in draft at last report | ℹ️ | Hosting outside Sri Lanka likely acceptable with safeguards; **confirm with a lawyer before beta** |
+| 2026-10-24 | **PDPA roles**: each property is the **data controller** for guest data; we are the **data processor** (and controller for owner/staff accounts and our billing). Legal bases: performance of the booking contract, plus legal obligation for guest registration. Hosting outside Sri Lanka allowed with proper safeguards | 🟡 | Founder research. Added to Phase 0 spec §6.19. **Lawyer to confirm**, in particular: transfer safeguards (Authority directives were in draft), processors' own direct obligations, retention periods, whether a data protection officer is required |
+| 2026-10-24 | Build data-protection features into Phase 0: tenant isolation, retention settings, privacy notice templates, data processing terms, role-based access, logging of sensitive-data views, export and hard delete on offboarding, breach procedure | ✅ | Required or strongly expected under the PDPA from 1 Jan 2027; much cheaper to build in from the start. See Phase 0 spec P0-PRIV-01…10 |
 | 2026-10-23 | **Clickable prototype** of the Phase 0 owner app for owner interviews | ✅ | Sample cabana property; shows today screen, calendar, booking detail, new booking, cleaning list, prices, booking sites, reports, offline mode, and a day-out visit marked as an idea. File: `prototype/owner-app.html` |
 
 ## Reference numbers (as of 2026-10-22)
@@ -80,7 +82,7 @@ Status: ✅ decided · 🟡 leaning / recommended, not final · ❓ open · ℹ�
 
 See the end of each spec and [partner-questions.md](./partner-questions.md). Most urgent:
 1. USD vs LKR pricing.
-2. Local tax, licensing and guest-reporting rules.
+2. Local tax, licensing and guest-reporting rules; lawyer review of PDPA points (Phase 0 §6.19).
 3. PayHere answers (sub-merchants, saved cards, foreign cards / USD, 3-D Secure).
 4. Channex answers (Agoda, unit pricing, VAT, migration, activation times).
 5. Final pricing after testing with owners.

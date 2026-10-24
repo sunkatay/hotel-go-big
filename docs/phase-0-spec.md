@@ -56,7 +56,7 @@ plan upgrade, not a migration.
 | Online check-in | Pre-arrival form, guest registration data, house rules acceptance, balance payment |
 | Housekeeping | Daily cleaning list, shareable with cleaners, clean/dirty status |
 | Day close | Fully automatic: no-shows, check-outs, room status, daily summary |
-| Guests | Guest list built from bookings, notes, repeat-guest detection, GDPR tools |
+| Guests | Guest list built from bookings, notes, repeat-guest detection, data-protection tools |
 | Receipts & invoices | PDF receipt / invoice per booking |
 | Reports | Dashboard + a handful of reports; CSV export |
 | Our own billing | Subscription plans, trial, payment for our product |
@@ -79,7 +79,7 @@ dynamic pricing · public API.
 | **Cleaner** | Today's cleaning list and marking rooms clean — via the app or a **login-free magic link** that rotates daily |
 
 - **P0-AUTH-01** Email + password or "sign in with Google / Apple"; MFA available, required for Owner when payments are enabled.
-- **P0-AUTH-02** Every change is written to the audit log (not exposed in the UI in Phase 0 except on the booking timeline).
+- **P0-AUTH-02** Every change is written to the audit log, and so is every **view or export of sensitive guest data** (ID documents, guest exports). Not exposed in the UI in Phase 0 except on the booking timeline; available to us and to the property owner on request (see P0-PRIV-06).
 
 ---
 
@@ -225,7 +225,7 @@ departed rooms to dirty, generates today's cleaning list, and emails the owner a
 - **P0-GST-01** Guest list auto-built from bookings: contact details, stays, total spent, notes, "repeat guest" badge.
 - **P0-GST-02** Automatic duplicate matching by email/phone; manual merge.
 - **P0-GST-03** Marketing consent captured on the website; CSV export of consenting guests.
-- **P0-GST-04** GDPR: export a guest's data; anonymize on request (financial records retained as legally required).
+- **P0-GST-04** Data protection (PDPA): export a guest's data; anonymize on request (financial records retained as legally required).
 
 ### 6.14 Receipts & invoices
 - **P0-INV-01** PDF receipt per booking, emailed on payment or at check-out.
@@ -246,7 +246,23 @@ departed rooms to dirty, generates today's cleaning list, and emails the owner a
 ### 6.18 Subscription & billing (our product)
 - **P0-SUB-01** Plans with trial, monthly/annual billing, card on file, invoices for our fee.
 - **P0-SUB-02** Plan limits enforced in software (e.g. number of rooms, channels), so later tiers unlock modules without a new product.
-- **P0-SUB-03** Self-serve upgrade, downgrade and cancellation; data export on cancellation.
+- **P0-SUB-03** Self-serve upgrade, downgrade and cancellation; data export on cancellation (see P0-PRIV-07).
+
+### 6.19 Data protection (Sri Lanka PDPA)
+Sri Lanka's Personal Data Protection Act (No. 9 of 2022, as amended) has core obligations scheduled
+from **1 January 2027**. For guest data, **each property is the data controller** and **we are the
+data processor**; for owners' and staff accounts and our own billing, **we are the controller**.
+Requirements below are based on founder research and must be **confirmed by a Sri Lankan lawyer**.
+- **P0-PRIV-01 Tenant isolation.** One property can never read or change another property's data. Enforced in the database (row-level security) as well as in the application, and covered by automated tests and the VAPT.
+- **P0-PRIV-02 Data minimisation.** Collect only what a booking, payment or legal duty needs. ID/passport fields appear only where guest registration requires them (P0-OCI-01).
+- **P0-PRIV-03 Retention settings.** Per data type: ID documents deleted after the guest-registration retention period (P0-OCI-04); guest names and contact details anonymized after a configurable period (default to be set with the lawyer and accountant, e.g. after the tax-record period); financial records kept as tax law requires, with personal details removed.
+- **P0-PRIV-04 Privacy notices.** Template privacy notice each property shows on its booking website and online check-in (controller: the property; processor: us; hosting outside Sri Lanka), plus our own privacy policy for owner accounts. Templates reviewed by the lawyer.
+- **P0-PRIV-05 Data processing terms.** Standard data processing terms in our Terms of Service, accepted by each property at signup: we process guest data only to run the service, list our sub-processors (hosting, email, payments, channel connectivity), notify the property of a breach without delay, and delete data on termination.
+- **P0-PRIV-06 Staff access by role.** Cleaners see room names and status only, never guest contact or ID details; staff see what their role needs (§3). Sensitive-data views are logged (P0-AUTH-02).
+- **P0-PRIV-07 Export and offboarding.** On request or cancellation, the owner can download all their data (CSV/JSON). After cancellation and a grace period, the property's data is **hard-deleted** from live systems; copies in backups expire automatically within the backup retention window (30 days), which the data processing terms state.
+- **P0-PRIV-08 Breach response.** A written procedure: detect, contain, assess, notify affected properties without delay, and support them in notifying the Data Protection Authority and guests as the law requires.
+- **P0-PRIV-09 Sub-processor agreements.** Accept the data processing agreements of each provider we use (hosting, email, error tracking, payments, Channex) and keep a list of them.
+- **P0-PRIV-10 Encryption.** HTTPS/TLS everywhere; encryption at rest for database, backups and files; field-level encryption for ID data. No credentials in code or the repository (automated secret scanning).
 
 ---
 
@@ -314,7 +330,7 @@ Phase 0 uses the entities defined in the PRD and [Phase 1 §7](./phase-1-spec.md
 | Concurrency | No double-sell across website, staff and OTAs (load test 50 concurrent attempts for the last room) |
 | Security | TLS, encryption at rest, field-level encryption for ID data, MFA for owners with payments |
 | PCI | SAQ-A scope via gateway-hosted payment fields; no card numbers in our systems |
-| Privacy | GDPR: DPA, export, anonymization, retention rules for ID data |
+| Privacy | Sri Lanka PDPA: see §6.19 (tenant isolation, retention, notices, data processing terms, export, deletion, breach procedure) |
 | Self-serve | ≥ 80% of signups complete setup without support contact |
 | Backups | Point-in-time recovery 7 days; daily snapshots 30 days |
 | Observability | Alerts on sync lag > 5 min, ingestion failures, payment failures, day-close failures |
